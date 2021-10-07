@@ -4,7 +4,7 @@ use num_bigint::BigUint;
 use rand::Rng;
 use rsa::errors::Error as RSAError;
 use rsa::internals;
-use rsa::{PublicKey, PublicKeyParts, RSAPrivateKey};
+use rsa::{PublicKey, PublicKeyParts, RsaPrivateKey};
 use subtle::ConstantTimeEq;
 use thiserror::Error;
 
@@ -84,7 +84,7 @@ pub fn verify_hashed<K: PublicKey>(pub_key: &K, hashed: &[u8], sig: &[u8]) -> Re
 /// Sign the given blinded digest.
 pub fn sign_hashed<R: Rng>(
     rng: &mut R,
-    priv_key: &RSAPrivateKey,
+    priv_key: &RsaPrivateKey,
     hashed: &[u8],
 ) -> Result<Vec<u8>, Error> {
     if priv_key.size() < hashed.len() {

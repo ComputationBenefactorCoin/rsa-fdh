@@ -1,5 +1,7 @@
 ## RSA-FDH
 
+THIS IS A FORK USED FOR DEVELOPMENT PURPOSES. IT'S NOT MAINTAINED. PLEASE USE ORIGINAL LIBRARY.
+
 [![checks](https://github.com/phayes/rsa-fdh/workflows/checks/badge.svg)](https://github.com/phayes/rsa-fdh/actions)
 [![codecov](https://codecov.io/gh/phayes/rsa-fdh/branch/master/graph/badge.svg)](https://codecov.io/gh/phayes/rsa-fdh)
 [![docs](https://docs.rs/rsa-fdh/badge.svg)](https://docs.rs/rsa-fdh)
@@ -26,7 +28,7 @@ This project implements two RSA-FDH signature schemes:
 
 ```rust
 use rsa_fdh;
-use rsa::{RSAPrivateKey, RSAPublicKey};
+use rsa::{RsaPrivateKey, RsaPublicKey};
 use sha2::{Sha256, Digest};
 
 // Set up rng and message
@@ -34,8 +36,8 @@ let mut rng = rand::thread_rng();
 let message = b"NEVER GOING TO GIVE YOU UP";
 
 // Create the keys
-let signer_priv_key = RSAPrivateKey::new(&mut rng, 256)?;
-let signer_pub_key: RSAPublicKey = signer_priv_key.clone().into();
+let signer_priv_key = RsaPrivateKey::new(&mut rng, 256)?;
+let signer_pub_key: RsaPublicKey = signer_priv_key.clone().into();
 
 // Apply a standard digest to the message
 let mut hasher = Sha256::new();
@@ -54,7 +56,7 @@ rsa_fdh::verify::<Sha256, _>(&signer_pub_key, &digest, &signature)?;
 
 ```rust
 use rsa_fdh;
-use rsa::{RSAPrivateKey, RSAPublicKey};
+use rsa::{RsaPrivateKey, RsaPublicKey};
 use sha2::{Sha256, Digest};
 
 // Set up rng and message
@@ -62,8 +64,8 @@ let mut rng = rand::thread_rng();
 let message = b"NEVER GOING TO GIVE YOU UP";
 
 // Create the keys
-let signer_priv_key = RSAPrivateKey::new(&mut rng, 256)?;
-let signer_pub_key: RSAPublicKey = signer_priv_key.clone().into();
+let signer_priv_key = RsaPrivateKey::new(&mut rng, 256)?;
+let signer_pub_key: RsaPublicKey = signer_priv_key.clone().into();
 
 // Hash the contents of the message with a Full Domain Hash, getting the digest
 let digest = blind::hash_message::<Sha256, _>(&signer_pub_key, message)?;
@@ -122,5 +124,5 @@ Two signature schemes are supported:
 Blinding, unblinding, signing and verification are done in the usual way for RSA.
 
  ## Contributors
- 
+
  1. Patrick Hayes ([linkedin](https://www.linkedin.com/in/patrickdhayes/)) ([github](https://github.com/phayes)) - Available for hire.

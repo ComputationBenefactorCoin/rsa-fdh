@@ -5,8 +5,8 @@
 //!
 //! ### Example
 //! ```
-//! use rsa_fdh::blind;
-//! use rsa::{RSAPrivateKey, RSAPublicKey};
+//! use xcbc_rsa_fdh::blind;
+//! use rsa::{RsaPrivateKey, RsaPublicKey};
 //! use sha2::{Sha256, Digest};
 //!
 //! // Set up rng and message
@@ -14,8 +14,8 @@
 //! let message = b"NEVER GOING TO GIVE YOU UP";
 //!
 //! // Create the keys
-//! let signer_priv_key = RSAPrivateKey::new(&mut rng, 2048).unwrap();
-//! let signer_pub_key: RSAPublicKey = signer_priv_key.clone().into();
+//! let signer_priv_key = RsaPrivateKey::new(&mut rng, 2048).unwrap();
+//! let signer_pub_key: RsaPublicKey = signer_priv_key.clone().into();
 //!
 //! // Hash the contents of the message with a Full Domain Hash, getting the digest
 //! let digest = blind::hash_message::<Sha256, _>(&signer_pub_key, message).unwrap();
@@ -74,7 +74,7 @@ mod tests {
     use crate::blind;
     use crate::Error;
     use rsa::PublicKeyParts;
-    use rsa::{RSAPrivateKey, RSAPublicKey};
+    use rsa::{RsaPrivateKey, RsaPublicKey};
     use sha2::Sha256;
 
     #[test]
@@ -86,9 +86,9 @@ mod tests {
 
         // Create the keys
         // Note: Uses INSECURE 256 bit key for quick testing
-        let signer_priv_key = RSAPrivateKey::new(&mut rng, 256).unwrap();
+        let signer_priv_key = RsaPrivateKey::new(&mut rng, 256).unwrap();
         let signer_pub_key =
-            RSAPublicKey::new(signer_priv_key.n().clone(), signer_priv_key.e().clone()).unwrap();
+            RsaPublicKey::new(signer_priv_key.n().clone(), signer_priv_key.e().clone()).unwrap();
 
         // Do this a bunch so that we get a good sampling of possibe digests.
         for _ in 0..500 {
@@ -131,14 +131,14 @@ mod tests {
         let message = b"NEVER GOING TO GIVE YOU UP";
 
         // Create the keys
-        let key_1 = RSAPrivateKey::new(&mut rng, 256).unwrap();
+        let key_1 = RsaPrivateKey::new(&mut rng, 256).unwrap();
         let public_1 = key_1.to_public_key();
         let digest_1 = blind::hash_message::<Sha256, _>(&public_1, message)?;
         let (blinded_digest_1, unblinder_1) = blind::blind(&mut rng, &public_1, &digest_1);
         let blind_signature_1 = blind::sign(&mut rng, &key_1, &blinded_digest_1)?;
         let signature_1 = blind::unblind(&public_1, &blind_signature_1, &unblinder_1);
 
-        let key_2 = RSAPrivateKey::new(&mut rng, 512).unwrap();
+        let key_2 = RsaPrivateKey::new(&mut rng, 512).unwrap();
         let public_2 = key_2.to_public_key();
         let digest_2 = blind::hash_message::<Sha256, _>(&public_2, message)?;
         let (blinded_digest_2, unblinder_2) = blind::blind(&mut rng, &public_2, &digest_2);

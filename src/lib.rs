@@ -9,7 +9,7 @@
 //! ### Regular signature scheme example
 //!
 //! ```
-//! use rsa::{RSAPrivateKey, RSAPublicKey};
+//! use rsa::{RsaPrivateKey, RsaPublicKey};
 //! use sha2::{Sha256, Digest};
 //!
 //! // Set up rng and message
@@ -17,8 +17,8 @@
 //! let message = b"NEVER GOING TO GIVE YOU UP";
 //!
 //! // Create the keys
-//! let signer_priv_key = RSAPrivateKey::new(&mut rng, 2048).unwrap();
-//! let signer_pub_key: RSAPublicKey = signer_priv_key.clone().into();
+//! let signer_priv_key = RsaPrivateKey::new(&mut rng, 2048).unwrap();
+//! let signer_pub_key: RsaPublicKey = signer_priv_key.clone().into();
 //!
 //! // Apply a standard digest to the message
 //! let mut hasher = Sha256::new();
@@ -26,15 +26,15 @@
 //! let digest = hasher.finalize();
 //!
 //! // Obtain a signture
-//! let signature = rsa_fdh::sign::<Sha256, _>(&mut rng, &signer_priv_key, &digest).unwrap();
+//! let signature = xcbc_rsa_fdh::sign::<Sha256, _>(&mut rng, &signer_priv_key, &digest).unwrap();
 //!
 //! // Verify the signature
-//! let ok = rsa_fdh::verify::<Sha256, _>(&signer_pub_key, &digest, &signature);
+//! let ok = xcbc_rsa_fdh::verify::<Sha256, _>(&signer_pub_key, &digest, &signature);
 //! assert!(ok.is_ok());
 //! ```
 
 use rand::Rng;
-use rsa::{PublicKey, RSAPrivateKey, RSAPublicKey};
+use rsa::{PublicKey, RsaPrivateKey, RsaPublicKey};
 
 pub mod blind;
 mod common;
@@ -48,14 +48,14 @@ pub use common::Error;
 /// The resulting signature is not a blind signature.
 pub fn sign<H: digest::Digest + Clone, R: Rng>(
     rng: &mut R,
-    priv_key: &RSAPrivateKey,
+    priv_key: &RsaPrivateKey,
     message: &[u8],
 ) -> Result<Vec<u8>, Error>
 where
     H::OutputSize: Clone,
 {
     let public_key = priv_key.to_public_key();
-    let (hashed, _iv) = common::hash_message::<H, RSAPublicKey>(&public_key, message)?;
+    let (hashed, _iv) = common::hash_message::<H, RsaPublicKey>(&public_key, message)?;
 
     common::sign_hashed(rng, priv_key, &hashed)
 }
@@ -80,7 +80,7 @@ where
 #[cfg(test)]
 mod tests {
     use crate as rsa_fdh;
-    use rsa::RSAPrivateKey;
+    use rsa::RsaPrivateKey;
     use sha2::{Digest, Sha256};
 
     #[test]
@@ -96,7 +96,7 @@ mod tests {
         let digest = hasher.finalize();
 
         // Create the keys
-        let signer_priv_key = RSAPrivateKey::new(&mut rng, 256).unwrap();
+        let signer_priv_key = RsaPrivateKey::new(&mut rng, 256).unwrap();
         let signer_pub_key = signer_priv_key.to_public_key();
 
         // Do this a bunch so that we get a good sampling of possibe digests.
@@ -119,11 +119,11 @@ mod tests {
         let digest = hasher.finalize();
 
         // Create the keys
-        let key_1 = RSAPrivateKey::new(&mut rng, 256).unwrap();
+        let key_1 = RsaPrivateKey::new(&mut rng, 256).unwrap();
         let public_1 = key_1.to_public_key();
         let signature_1 = rsa_fdh::sign::<Sha256, _>(&mut rng, &key_1, &digest)?;
 
-        let key_2 = RSAPrivateKey::new(&mut rng, 512).unwrap();
+        let key_2 = RsaPrivateKey::new(&mut rng, 512).unwrap();
         let public_2 = key_1.to_public_key();
         let signature_2 = rsa_fdh::sign::<Sha256, _>(&mut rng, &key_2, &digest)?;
 
