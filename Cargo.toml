@@ -7,7 +7,7 @@ keywords = ["crypto", "rsa", "signature", "blind"]
 categories = ["cryptography"]
 description = "RSA-FDH is a is provably secure blind-signing signature scheme that uses RSA and a full domain hash and support blind signing / blind signatures"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/phayes/rsa-fdh"
+repository = "https://github.com/ComputationBenefactorCoin/rsa-fdh"
 readme = "README.md"
 
 [badges]
